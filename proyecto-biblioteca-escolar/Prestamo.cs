@@ -28,16 +28,37 @@ namespace proyecto_biblioteca_escolar
             Activo = true;
         }
 
-        // Método para mostrar los detalles del préstamo en consola
+        // Método para mostrar la información del préstamo
         public void MostrarInformacion()
         {
-            Console.WriteLine($"ID Préstamo: {IdPrestamo}");
-            Console.WriteLine($"ISBN Libro: {IsbnLibro}");
-            Console.WriteLine($"Matrícula Alumno: {MatriculaAlumno}");
-            Console.WriteLine($"Fecha de Préstamo: {FechaPrestamo:dd/MM/yyyy}");
-            Console.WriteLine($"Fecha de Devolución: {FechaDevolucion:dd/MM/yyyy}");
-            Console.WriteLine($"Estado: {(Activo ? "Activo (Pendiente)" : "Devuelto")}");
-            Console.WriteLine("--------------------------------------------------");
+            string estadoStr = Activo ? "ACTIVO" : "DEVUELTO";
+            Console.WriteLine($"[Préstamo #{IdPrestamo}] ISBN: {IsbnLibro} | Alumno: {MatriculaAlumno} | Estado: {estadoStr}");
+            Console.WriteLine($"   Fecha Préstamo: {FechaPrestamo:dd/MM/yyyy} | Límite Devolución: {FechaDevolucion:dd/MM/yyyy}");
+        }
+
+        // Método del Día 5: Registrar la devolución del libro
+        public void RegistrarDevolucion(DateTime fechaEntregaReal)
+        {
+            if (!Activo)
+            {
+                Console.WriteLine($"⚠️ El préstamo #{IdPrestamo} ya se encuentra devuelto.");
+                return;
+            }
+
+            Activo = false;
+            Console.WriteLine($"\n✅ Devolución registrada con éxito para el préstamo #{IdPrestamo}.");
+
+            // Evaluación de reglas de negocio (Devolución a tiempo vs Retraso)
+            if (fechaEntregaReal <= FechaDevolucion)
+            {
+                Console.WriteLine("🎉 Entrega a tiempo. ¡Sin penalización!");
+            }
+            else
+            {
+                TimeSpan retraso = fechaEntregaReal - FechaDevolucion;
+                int diasRetraso = retraso.Days;
+                Console.WriteLine($"⚠️ Entrega con retraso de {diasRetraso} día(s). Se aplica registro de mora.");
+            }
         }
     }
 }

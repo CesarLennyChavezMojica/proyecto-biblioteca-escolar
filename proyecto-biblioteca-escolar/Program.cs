@@ -8,69 +8,33 @@ namespace proyecto_biblioteca_escolar
     {
         static void Main(string[] args)
         {
-            // Carga inicial de títulos de prueba (Días 2 y 3)
-            List<Titulo> biblioteca = new List<Titulo>()
-            {
-                new Titulo("978-0132358884", "Clean Code", 15, new List<int> { 101, 102, 103 }),
-                new Titulo("978-8281633618", "Design Patterns", 22, new List<int> { 281, 282 }),
-                new Titulo("978-0321125217", "Domain-Driven Design", 8, new List<int> { 381 }),
-                new Titulo("978-0134494166", "Clean Architecture", 30, new List<int> { 481, 482, 483, 484 }),
-                new Titulo("978-0596007126", "Head First Design Patterns", 12, new List<int> { 581, 582 }),
-                new Titulo("978-0321356688", "Effective Java", 19, new List<int> { 681, 682, 683 }),
-                new Titulo("978-1449373328", "Designing Data-Intensive Applications", 25, new List<int> { 781, 782 }),
-                new Titulo("978-0135957059", "The Pragmatic Programmer", 40, new List<int> { 801, 802, 803 })
-            };
+            Console.WriteLine("=== SISTEMA DE BIBLIOTECA ESCOLAR - DÍA 5 ===");
 
-            Console.WriteLine("=== SISTEMA DE BIBLIOTECA ESCOLAR - DÍA 4 ===");
-            Console.WriteLine($"Total de libros registrados: {biblioteca.Count}\n");
+            // 1. Crear un préstamo de prueba (Plazo de 7 días a partir de hoy)
+            Prestamo prestamo1 = new Prestamo(101, "978-0132358884", "24737800", DateTime.Now, 7);
 
-            // --- PRUEBAS DE BÚSQUEDA (DÍA 4) ---
-            Console.WriteLine("--- 1. Búsqueda por ISBN ('978-0132358884') ---");
-            BuscarPorIsbn(biblioteca, "978-0132358884");
+            Console.WriteLine("\n--- Estado Inicial del Préstamo ---");
+            prestamo1.MostrarInformacion();
 
-            Console.WriteLine("\n--- 2. Búsqueda por ISBN (Inexistente '000-0000000000') ---");
-            BuscarPorIsbn(biblioteca, "000-0000000000");
+            // 2. Simular entrega A TIEMPO (hoy mismo)
+            Console.WriteLine("\n--- Prueba 1: Simulación de entrega a tiempo ---");
+            prestamo1.RegistrarDevolucion(DateTime.Now);
+            prestamo1.MostrarInformacion();
 
-            Console.WriteLine("\n--- 3. Búsqueda por Título (Coincidencia 'Clean') ---");
-            BuscarPorTitulo(biblioteca, "Clean");
+            // 3. Crear otro préstamo para simular ENTREGA CON RETRASO
+            Console.WriteLine("\n------------------------------------------------");
+            Prestamo prestamo2 = new Prestamo(102, "978-0134494166", "24737800", DateTime.Now.AddDays(-10), 7);
+
+            Console.WriteLine("\n--- Estado Inicial del Préstamo #102 (Hecho hace 10 días con plazo de 7) ---");
+            prestamo2.MostrarInformacion();
+
+            Console.WriteLine("\n--- Prueba 2: Simulación de entrega fuera de tiempo ---");
+            // Se entrega hoy, pero ya pasaron los días límite
+            prestamo2.RegistrarDevolucion(DateTime.Now);
+            prestamo2.MostrarInformacion();
 
             Console.WriteLine("\nPresiona cualquier tecla para salir...");
             Console.ReadKey();
-        }
-
-        // Método para buscar un libro por su ISBN exacto
-        public static void BuscarPorIsbn(List<Titulo> lista, string isbn)
-        {
-            var libro = lista.FirstOrDefault(t => t.Isbn.Equals(isbn, StringComparison.OrdinalIgnoreCase));
-
-            if (libro != null)
-            {
-                Console.WriteLine($"[ENCONTRADO] ISBN: {libro.Isbn} | Título: {libro.Nombre}");
-                Console.WriteLine($"   Ejemplares disponibles ({libro.Ejemplares.Count}): {string.Join(", ", libro.Ejemplares)}");
-            }
-            else
-            {
-                Console.WriteLine($"[NO ENCONTRADO] No se encontró ningún libro con el ISBN: {isbn}");
-            }
-        }
-
-        // Método para buscar libros cuyo título contenga la palabra clave
-        public static void BuscarPorTitulo(List<Titulo> lista, string criterio)
-        {
-            var resultados = lista.Where(t => t.Nombre.Contains(criterio, StringComparison.OrdinalIgnoreCase)).ToList();
-
-            if (resultados.Count > 0)
-            {
-                Console.WriteLine($"Se encontraron {resultados.Count} resultado(s) para '{criterio}':");
-                foreach (var libro in resultados)
-                {
-                    Console.WriteLine($" - [{libro.Isbn}] {libro.Nombre} | Ejemplares: {libro.Ejemplares.Count}");
-                }
-            }
-            else
-            {
-                Console.WriteLine($"[NO ENCONTRADO] No se encontraron libros que contengan: '{criterio}'");
-            }
         }
     }
 }
